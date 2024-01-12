@@ -48,25 +48,25 @@ window = tk.Tk()
 window.title("XRP Price Difference Calculator")
 window.geometry("400x250")
 
-# Create input label and entry box
+# Created input label and entry box
 input_label = tk.Label(window, text="Enter amount in INR:")
 input_label.pack()
 input_entry = tk.Entry(window)
 input_entry.pack()
 
-# Create calculate button
+# Created calculate button
 calculate_button = tk.Button(window, text="Calculate", command=calculate)
 calculate_button.pack()
 
-# Create a label for the result
+# Created a label for the result
 result_label = tk.Label(window, text="")
 result_label.pack()
 
-# Create a label for the output
+# Created a label for the output
 output_label = tk.Label(window, text="")
 output_label.pack()
 
-# Create a label for the price difference
+# Created a label for the price difference
 diff_label = tk.Label(window, text="")
 diff_label.pack()
 
