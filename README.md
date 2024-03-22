@@ -1,4 +1,4 @@
-# Learn-py
+# Learn-py with Implementation of Sorting Algorithms
 Aim of the project: So in this side project I tried to learn more about python3 while exploring my own fields of intrests (Stock Markets). While Stock exchange api's are paid and slighlty expensive for a student I tried to build a crypto based price monitoring system between 2 exchanges. I learnt more about Arbitrage and python3 hitting 2 birds with one stone.
 
 **Key Discoveries:**
