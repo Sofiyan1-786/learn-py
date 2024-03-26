@@ -1,85 +1,95 @@
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
 import pandas as pd
-import requests
 
-vc_data = {
-    "vC": ["BTC", "ETH", "XRP", "LTC", "BCH", "EOS", "XLM", "TRX", "ADA", "XMR", "NEO", "DASH", "ETC", "ZEC", "DOGE", "VET", "BAT", "QTUM", "LSK", "ZRX", "OMG", "NANO", "ICX", "WAVES", "REP", "GNT", "KNC", "CVC", "BNT", "LOOM"],
-    "Sambhaavna": [0.05, 0.03, 0.07, 0.02, 0.06, 0.04, 0.08, 0.01, 0.09, 0.05, 0.04, 0.07, 0.03, 0.06, 0.02, 0.08, 0.01, 0.09, 0.05, 0.04, 0.07, 0.03, 0.06, 0.02, 0.08, 0.01, 0.09, 0.05, 0.04, 0.07]
+# Step 1: Fetch Data (Mock Data for demonstration)
+crypto_data = {
+    "Cryptocurrency": ["BTC", "ETH", "XRP", "LTC", "BCH", "EOS", "XLM", "TRX", "ADA", "XMR"],
+    "Arbitrage_Opportunity": [0.05, 0.03, 0.07, 0.02, 0.06, 0.04, 0.08, 0.01, 0.09, 0.05]  # Example arbitrage opportunities
 }
 
-df = pd.DataFrame(vc_data)
+df = pd.DataFrame(crypto_data)
 
-def merge_sort(arr, key):
-    if len(arr) <= 1:
-        return
-    
-    mid = len(arr) // 2
-    L = arr[:mid] #yeh waala index begginineg se mid tak ka hoga
-    R = arr[mid:] #yeh wala mid sey shuru hota
+# Step 2: Calculate Arbitrage Opportunities
 
-    merge_sort(L, key)
-    merge_sort(R, key)
+# Step 3: Sort Data
+sorted_df = df.sort_values(by="Arbitrage_Opportunity", ascending=False)
 
-    i = 0
-    j = 0
-    k = 0
-
-    while i < len(L) and j < len(R): #jab tak i less than length of L and j less than length of R hai tab tak chalega
-        if float(L[i][key]) < float(R[j][key]):
-            arr[k] = L[i]
-            i += 1
-        else:
-            arr[k] = R[j]
-            j += 1
-        k += 1
-
-    while i < len(L): # Doosre aur teesre while loops ka kaam hai jab koi bhi sub-array (ya to L ya R) mein tulanat loop pura hone ke baad bhi bacha hua hai.
-        arr[k] = L[i]
-        i += 1
-        k += 1
-
-    while j < len(R): # Doosre aur teesre while loops ka kaam hai jab koi bhi sub-array (ya to L ya R) mein tulanat loop pura hone ke baad bhi bacha hua hai.
-        arr[k] = R[j]
-        j += 1
-        k += 1
-
-
-def merge_sort_dataframe(df, column):
-    arr = df.to_dict(orient='records')
-    merge_sort(arr, key=column)
-    df_sorted = pd.DataFrame(arr)
-    return df_sorted
-
-sorted_df = merge_sort_dataframe(df, 'Sambhaavna')
+# Step 4: Create Dash App
 app = Dash(__name__)
+
+# Step 5: Define Dash Layout
 app.layout = html.Div([
-    html.H4('vC Arbitrage Opportunities'),
-    dcc.Graph(id="vc-arbitrage-graph"),
+    html.H4('Cryptocurrency Arbitrage Opportunities'),
+    dcc.Graph(id="crypto-arbitrage-graph"),
     html.Hr(),
     html.Div(id='top-opportunity-output')
 ])
 
+# Step 6: Display Sorted Data
 @app.callback(
-    Output("vc-arbitrage-graph", "figure"),
-    Input("vc-arbitrage-graph", "clickData")
+    Output("crypto-arbitrage-graph", "figure"), 
+    Input("crypto-arbitrage-graph", "clickData")
 )
 def display_sorted_data(clickData):
-    scale = 'viridis'
-    fig = px.bar(sorted_df, x="vC", y="Sambhaavna", color="Sambhaavna", color_continuous_scale=scale)
-    fig.update_layout(title="Sorted vC Arbitrage Opportunities", xaxis_title="vC", yaxis_title="Arbitrage Opportunity")
+    scale = 'viridis'  # Set a fixed color scale
+    fig = px.bar(sorted_df, x="Cryptocurrency", y="Arbitrage_Opportunity", color="Arbitrage_Opportunity", color_continuous_scale=scale)
+    fig.update_layout(title="Sorted Cryptocurrency Arbitrage Opportunities", xaxis_title="Cryptocurrency", yaxis_title="Arbitrage Opportunity")
     return fig
 
+# Step 7: Print Top Opportunity
 @app.callback(
-    Output("top-opportunity-output", "children"),
-    Input("vc-arbitrage-graph", "clickData")
+    Output("top-opportunity-output", "children"), 
+    Input("crypto-arbitrage-graph", "clickData")
 )
 def print_top_opportunity(clickData):
     if clickData:
-        vc_name = clickData['points'][0]['x']
-        opportunity = sorted_df.loc[sorted_df["vC"] == vc_name, "Opportunituy"].values[0]
-        return f"The top arbitrage opportunity for {vc_name} is {opportunity}"
+        crypto_name = clickData['points'][0]['x']
+        opportunity = sorted_df.loc[sorted_df["Cryptocurrency"] == crypto_name, "Arbitrage_Opportunity"].values[0]
+        return f"The top arbitrage opportunity for {crypto_name} is {opportunity}"
     return ""
 
+# Step 8: Run the Dash app
 if __name__ == "__main__":
     app.run_server(debug=True)
+    
+def get_kucoin_prices():
+    url = 'https://api.kucoin.com/api/v1/market/orderbook/level1'
+    params = {
+        'symbol': 'BTC-USDT,ETH-USDT,XRP-USDT,LTC-USDT,BCH-USDT,EOS-USDT,XLM-USDT,TRX-USDT,ADA-USDT,XMR-USDT'
+    }
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        prices = {item['symbol']: float(item['bestAsk']) for item in data['data']}
+        return prices
+    else:
+        print('Failed to fetch data from KuCoin API')
+        return None
+
+def get_zebpay_prices():
+    url = 'https://www.zebapi.com/pro/v1/market'
+    params = {'currencyCode': 'INR'}
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        prices = {item['symbol']: float(item['last']) for item in data}
+        return prices
+    else:
+        print('Failed to fetch data from ZebPay API')
+        return None
+
+if __name__ == "__main__":
+    kucoin_prices = get_kucoin_prices()
+    zebpay_prices = get_zebpay_prices()
+    
+    if kucoin_prices:
+        print("KuCoin Prices:")
+        for symbol, price in kucoin_prices.items():
+            print(f"{symbol}: {price}")
+    
+    if zebpay_prices:
+        print("\nZebPay Prices:")
+        for symbol, price in zebpay_prices.items():
+            print(f"{symbol}: {price}")
+

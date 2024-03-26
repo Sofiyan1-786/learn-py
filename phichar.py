@@ -1,30 +1,24 @@
-import matplotlib.pyplot as plt
-import numpy as np
+from dash import Dash, dcc, html, Input, Output
+import plotly.express as px
 import pandas as pd
 import random
-
-# Sample DataFrame (replace this with your actual data)
 crypto_data_df = pd.DataFrame({
     'Day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    'Exchange_A': [random.uniform(40000, 45000) for _ in range(5)],
-    'Exchange_B': [random.uniform(39000, 46000) for _ in range(5)],
-    'Exchange_C': [random.uniform(38000, 47000) for _ in range(5)],
-    # Add more exchanges as needed
+    'WazirX': [random.uniform(40000, 45000) for _ in range(5)],
+    'Binacne': [random.uniform(39000, 46000) for _ in range(5)],
+    'Chutcoin': [random.uniform(38000, 47000) for _ in range(5)],
 })
 
-# BST Node class
 class Node:
-    def __init__(self, key):
+    def _init_(self, key):
         self.left = None
         self.right = None
         self.key = key
 
-# BST class
 class BST:
-    def __init__(self):
+    def _init_(self):
         self.root = None
 
-    # Insertion method
     def insert(self, root, key):
         if root is None:
             return Node(key)
@@ -34,7 +28,6 @@ class BST:
             root.right = self.insert(root.right, key)
         return root
 
-    # Inorder traversal (sorted order)
     def inorder_traversal(self, root, sorted_data):
         if root:
             self.inorder_traversal(root.left, sorted_data)
@@ -42,16 +35,13 @@ class BST:
             self.inorder_traversal(root.right, sorted_data)
         return sorted_data
 
-# Create a BST and insert the data into it
 bst = BST()
 for exchange in crypto_data_df.columns[1:]:
     for price in crypto_data_df[exchange]:
         bst.root = bst.insert(bst.root, price)
 
-# Define sorting options
 sorting_options = ['Day'] + list(crypto_data_df.columns[1:])
 
-# Sort the data based on the selected column
 def sort_data(sort_by):
     if sort_by == 'Day':
         sorted_data_df = crypto_data_df.copy()
@@ -62,7 +52,6 @@ def sort_data(sort_by):
         sorted_data_df = sorted_data_df.sort_values(by=[sort_by])
     return sorted_data_df
 
-# Plot the bar chart
 def plot_bar_chart(sort_by):
     sorted_data_df = sort_data(sort_by)
     plt.bar(sorted_data_df['Day'], sorted_data_df[sort_by])
@@ -71,5 +60,32 @@ def plot_bar_chart(sort_by):
     plt.title(f'Cryptocurrency Prices Across Exchanges (Sorted by {sort_by})')
     plt.show()
 
-# Run the function to plot the bar chart
-plot_bar_chart('Day')  # Default sorting by Day
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = dash.Dash(_name_, external_stylesheets=external_stylesheets)
+
+app.layout = html.Div([
+    dcc.Dropdown(
+        id='sorting-dropdown',
+        options=[{'label': i, 'value': i} for i in sorting_options],
+        value='Day'
+    ),
+    dcc.Graph(id='crypto-bar-chart')
+])
+
+@app.callback(
+    Output('crypto-bar-chart', 'figure'),
+    [Input('sorting-dropdown', 'value')]
+)
+def update_bar_chart(sort_by):
+    sorted_data_df = sort_data(sort_by)
+    fig = {
+        'data': [{'x': sorted_data_df['Day'], 'y': sorted_data_df[sort_by], 'type': 'bar'}],
+        'layout': {
+            'xaxis': {'title': 'Day of the Week'},
+            'yaxis': {'title': 'Price'},
+            'title': f'Cryptocurrency Prices Across Exchanges (Sorted by {sort_by})'
+        }
+    }
+    return fig
+
