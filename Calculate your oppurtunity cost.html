@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <title>Calculate your OPPURTUNITY cost</title>
   <link rel="stylesheet" href="./style.css">
-  <<link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
-  <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
 </head>
 <body>
 <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'> <!-- AT ANY COST NO TOUCHING THIS LINE -->
@@ -58,27 +57,31 @@
           <div class="profile-content">
             <img src="https://raw.githubusercontent.com/Sofiyan1-786/learn-py/main/main%20logo.PNG" alt="#">
           </div>
-          <!-- <i class='bx bx-log-out'></i>  Need work on this logout--> 
+          <i class='bx bx-log-out'></i> 
           </div>
       </li>
     </ul>
   </div>
   <section class="home-section">
     <div class="home-content">
-      <i class='bx bx-menu'></i>
+      
       <span class="text">ADS PROJECT - ARBITRAGE OPPURTUNITY</span>
       <br>
     </div>
-    <h1>XRP Price Difference Calculator</h1>
+    <h1 class = "t1">XRP Price Difference Calculator</t1>
     
-    <label for="amount">  Enter amount in INR:</label>
-    <input type="number" id="amount" name="amount">
+    <label for="amount">Enter amount in INR:</label>
+    <input button class="custom-btn btn-7" class="overflow" type="number" id="amount" name="amount">
+    <style>
+      .overflow {
+        overflow: hidden;
+      }
+    </style>
+    <button class="custom-btn btn-6" onclick="calculate()">Calculate</button>
 
-    <button onclick="calculate()">  Calculate</button>
-
-    <p id="result"></p>
-    <p id="output"></p>
-    <p id="diff"></p>
+    <t1 id="result"></t1>
+    <t1 id="output"></t1>
+    <t1 id="diff"></t1>
 
     <p id="zebpay-price"></p>
     <p id="kucoin-price"></p>
@@ -88,7 +91,7 @@
   }
 
   function getKucoinXRPPrice() {
-      return 490; // Just pretending again
+      return 490; // Just again
   }
 
   function calculate() {
@@ -119,14 +122,44 @@
       }
   }</script>
     <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-    <SPAN></SPAN><h1>Here we are using Greedy Algorithm: Detailed Personal Explanation:</h1>
-    <BR><span>   </span><h2>1. Here the Greedy Algo gets the aray sorted in a decending order so O(n) Max Heap like structure.
-    <br><span>   </span>2. it Creates the variable from the Order Book or Order History, Considers the Exchange fees and Currency conversion charges.<br> 3. Calculates the best oppurtunity, returns deducted profitability percentage</h2>
+    <SPAN></SPAN>
+    <br>
+    <h1 class = "t1">Here we are using Greedy Algorithm: Detailed Personal Explanation:</h1>
+    <BR><span>   </span>
+    <h3 class = "t2">1. Here the Greedy Algo gets the aray sorted in a decending order so O(n) Max Heap like structure.<br>
+    2. it Creates the variable from the Order Book or Order History, Considers the Exchange fees and Currency conversion charges.
+    <br> 3. Calculates the best oppurtunity, returns deducted profitability percentage</h3>
+    <br><span>   </span>
     <br><span>   </span></h2>
+
 
     </section>
   <script  src="./script.js"></script>
   
+  <div class="zoom-in-out-box"></div>
+  <style>
+    .zoom-in-out-box {
+       margin: 24px;
+       width: 50px;
+       height: 50px;
+       background: #e4e9f7;
+       animation: zoom-in-zoom-out 2s ease infinite;
+    }
+    @keyframes zoom-in-zoom-out { 
+       0% {
+          transform: scale(1, 1);
+       }
+       50% {
+          transform: scale(1.5, 1.5);
+       }
+       100% {
+          transform: scale(1, 1);
+       }
+    }
+ </style>
+ <div class="scrollbar" id="scrollbar2"></div>
+
+ 
 </body>
 
 </html>
